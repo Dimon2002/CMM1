@@ -28,8 +28,8 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\CourseProjectDima\CourseProjectDima\CourseProjectDima.csproj" />
-      <ProjectReference Include="..\..\SharpMath\SharpMath\SharpMath.csproj" />
+      <ProjectReference Include="..\CourseProjectDima\CourseProjectDima\CourseProjectDima.csproj" />
+      <ProjectReference Include="..\SharpMath\SharpMath\SharpMath.csproj" />
     </ItemGroup>
 
 </Project>
