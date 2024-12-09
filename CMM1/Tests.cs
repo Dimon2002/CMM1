@@ -26,7 +26,7 @@ public class Tests
 
     public Tests()
     {
-        const int split = 10;
+        int split = Config.GridSplit;
 
         var gridBuilder2D = new GridBuilder2D();
         var grid = gridBuilder2D

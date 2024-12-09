@@ -13,6 +13,12 @@ def read_data(filename):
             z.append(float(data[2]))
     return np.array(x), np.array(y), np.array(z)
 
+def read_config(filename):
+    with open(filename, 'r') as file:
+        for line in file:
+            data = line
+    return data
+
 # Функция для чтения точек из файла
 def read_points(filename):
     x, y = [], []
@@ -23,7 +29,7 @@ def read_points(filename):
             y.append(float(data[1]))
     return np.array(x), np.array(y)
 
-directory = "simple_test"
+directory = read_config('config.txt')
 # Чтение данных из файлов
 filename1 = f'{directory}/dataFEM.txt'
 filename2 = f'{directory}/dataSpline.txt'
@@ -55,12 +61,12 @@ max_z = max(np.max(zi1), np.max(zi2), np.max(zi3))
 # Создание первого изображения для поверхностей
 fig1 = plt.figure(figsize=(8, 6))
 ax1 = fig1.add_subplot(111, projection='3d')
-surf1 = ax1.plot_surface(xi, yi, zi1, color='blue', label='FEM')
-surf2 = ax1.plot_surface(xi, yi, zi2, color='red', label='Spline')
+surf1 = ax1.plot_surface(xi, yi, zi1, color='blue', label='Fem')
+surf2 = ax1.plot_surface(xi, yi, zi2, color='purple', label='Spline')
 surf3 = ax1.plot_surface(xi, yi, zi3, color='green', label='True')
 
-ax1.set_xlabel('X')
-ax1.set_ylabel('Y')
+ax1.set_xlabel('R')
+ax1.set_ylabel('Z')
 ax1.set_zlabel('Function value')
 ax1.set_zlim(min_z, max_z)  # Установка шкалы по оси Z
 
@@ -72,11 +78,11 @@ fig2 = plt.figure(figsize=(8, 6))
 ax2 = fig2.add_subplot(111)
 
 # Проекция по оси X и значению функции
-ax2.plot(x1, z1, color='blue', label='FEM')
-ax2.plot(x2, z2, color='red', label='Spline')
+ax2.plot(x1, z1, color='blue', label='Fem')
+ax2.plot(x2, z2, color='purple', label='Spline')
 ax2.plot(x3, z3, color='green', label='True')
 
-ax2.set_xlabel('X')
+ax2.set_xlabel('R')
 ax2.set_ylabel('Function value')
 ax2.set_ylim(min_z, max_z)  # Установка шкалы по оси Y
 

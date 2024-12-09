@@ -53,7 +53,7 @@ void RunTest()
     ConfigureServices(services);
     var provider = services.BuildServiceProvider();
 
-    const int splineGridSplit = 1;
+    int splineGridSplit = Config.SplineSplit;
 
     var splineGrid = new GridBuilder()
         .SetXAxis(new AxisSplitParameter(
@@ -71,8 +71,8 @@ void RunTest()
 
     var tests = new Tests();
 
-    var femPoints = tests.GetPoints(12);
-    var inputPoints = tests.GetPoints(12);
+    var femPoints = tests.GetPoints(10);
+    var inputPoints = tests.GetPoints(20);
 
     //var derivativesByX = tests.GetDerivativeByXValues(inputGrid.Nodes);
     //var derivativesByY = tests.GetDerivativeByYValues(inputGrid.Nodes);
@@ -102,12 +102,20 @@ void RunTest()
             weights[i] = 1d;
         }
     }
+    
+    var spline = splineCreator.CreateSpline(funcValues, weights, Config.Regularization);
 
-    var spline = splineCreator.CreateSpline(funcValues, weights, 0);
-
-    using var writerFEM = new StreamWriter("../../../../CMM1.View/dataFEM.txt");
-    using var writerSpline = new StreamWriter("../../../../CMM1.View/dataSpline.txt");
-    using var writerTrue = new StreamWriter("../../../../CMM1.View/dataTrue.txt");
+    var femPath = "../../../../CMM1.View/" + Config.FolderName + "/dataFEM.txt";
+    var splinePath = "../../../../CMM1.View/" + Config.FolderName + "/dataSpline.txt";
+    var truePath = "../../../../CMM1.View/" + Config.FolderName + "/dataTrue.txt";
+    
+    Directory.CreateDirectory("../../../../CMM1.View/" + Config.FolderName);
+    
+    using var writerFEM = new StreamWriter(femPath);
+    using var writerSpline = new StreamWriter(splinePath);
+    using var writerTrue = new StreamWriter(truePath);
+    using var configWriter = new StreamWriter("../../../../CMM1.View/config.txt");
+    configWriter.Write(Config.FolderName);
 
     Console.WriteLine("FEM solution");
 
