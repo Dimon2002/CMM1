@@ -1,4 +1,5 @@
-﻿using CourseProjectDima.Calculus;
+﻿using CourseProjectDima;
+using CourseProjectDima.Calculus;
 using CourseProjectDima.Core.GridComponents;
 using CourseProjectDima.FEM.Assembling.Local;
 using CourseProjectDima.GridGenerator;
@@ -25,7 +26,7 @@ public class Tests
 
     public Tests()
     {
-        const int split = 2;
+        const int split = 10;
 
         var gridBuilder2D = new GridBuilder2D();
         var grid = gridBuilder2D
@@ -51,12 +52,9 @@ public class Tests
 
         var localBasisFunctionsProvider = new LocalBasisFunctionsProvider(grid, new LinearFunctionsProvider());
 
-        //Func<Node2D, double, double> u = (p, t) => Math.Pow(p.R, 1) + Math.Pow(p.Z, 1) - Math.Pow(t, 5);
-        //var f = new RightPartParameter((p, t) => -1 / p.R - 5 * Math.Pow(t, 4), grid);
-
-        Func<Node2D, double, double> u = (p, t) => Math.Pow(p.R, 1) + Math.Pow(p.Z, 1);
-        var f = new RightPartParameter((p, t) => -1 / p.R, grid);
-
+        Func<Node2D, double, double> u = Config.u;
+        var f = new RightPartParameter(Config.f, grid);
+        
         var derivativeCalculator = new DerivativeCalculator();
         var localAssembler = new LocalAssembler(grid, localMatrixAssembler, materialRepository, f, localBasisFunctionsProvider);
 

@@ -1,4 +1,6 @@
 ﻿using CMM1;
+using CourseProjectDima;
+using CourseProjectDima.Core.GridComponents;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -51,7 +53,7 @@ void RunTest()
     ConfigureServices(services);
     var provider = services.BuildServiceProvider();
 
-    const int splineGridSplit = 4;
+    const int splineGridSplit = 1;
 
     var splineGrid = new GridBuilder()
         .SetXAxis(new AxisSplitParameter(
@@ -68,7 +70,7 @@ void RunTest()
     splineCreator.Allocate(splineGrid);
 
     var tests = new Tests();
-  
+
     var femPoints = tests.GetPoints(12);
     var inputPoints = tests.GetPoints(12);
 
@@ -87,7 +89,7 @@ void RunTest()
     var weights = new double[funcValues.Length];
 
     var random = new Random();
-    
+
     for (var i = 0; i < inputPoints.Length; i++)
     {
         if (!femPoints.Any(p => Math.Abs(p.X - inputPoints[i].X) <= 1e-16 && Math.Abs(p.Y - inputPoints[i].Y) <= 1e-16))
@@ -106,7 +108,7 @@ void RunTest()
     using var writerFEM = new StreamWriter("../../../../CMM1.View/dataFEM.txt");
     using var writerSpline = new StreamWriter("../../../../CMM1.View/dataSpline.txt");
     using var writerTrue = new StreamWriter("../../../../CMM1.View/dataTrue.txt");
-    
+
     Console.WriteLine("FEM solution");
 
     var femSolution = tests.GetFuncValues(points);
@@ -127,12 +129,12 @@ void RunTest()
     }
 
     Console.WriteLine("True solution");
-    Func<Point, double, double> u = (p, t) => Math.Pow(p.X, 1) + Math.Pow(p.Y, 1);
+    Func<Node2D, double, double> u = Config.u;
 
     foreach (var point in points)
     {
-        Console.WriteLine($"{point.X:F8} {point.Y:F8} {u(point, 1):E8}");
-        writerTrue.WriteLine($"{point.X:F8} {point.Y:F8} {u(point, 1):E8}");
+        Console.WriteLine($"{point.X:F8} {point.Y:F8} {u(new Node2D(point.X, point.Y), 1):E8}");
+        writerTrue.WriteLine($"{point.X:F8} {point.Y:F8} {u(new Node2D(point.X, point.Y), 1):E8}");
     }
 }
 
