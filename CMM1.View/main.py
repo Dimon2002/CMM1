@@ -18,7 +18,6 @@ def read_config(filename):
         for line in file:
             data = line
     return data
-
 # Функция для чтения точек из файла
 def read_points(filename):
     x, y = [], []

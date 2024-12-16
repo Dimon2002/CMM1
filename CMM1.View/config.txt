@@ -1,1 +1,1 @@
-sin(r)cos(z)/4
+exp(r) + exp(z)

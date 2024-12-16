@@ -29,14 +29,18 @@ public static class Config
         "sin(r)cos(z)"
     };
 
-    private const int FuncIndex = 3;
+    private const int FuncIndex = 2;
 
     public static Func<Node2D, double, double> u = (p, t) => Us[FuncIndex](p, t);
     public static Func<Node2D, double, double> f = (p, t) => Fs[FuncIndex](p, t);
     
     public static readonly int GridSplit = 10;
-    public static readonly int SplineSplit = 4;
-    public static readonly double Regularization = 0;
+    public static readonly int UNums = 10;
+    public static readonly int VNums = 10;
+    public static readonly int PointsNum = 16;
     
-    public static readonly string FolderName = Folders[FuncIndex] + "/" + SplineSplit;
+    
+    public static readonly string FolderName = Folders[FuncIndex];
+    public static readonly int DegreeU = 3;
+    public static readonly int DegreeV = 3;
 }

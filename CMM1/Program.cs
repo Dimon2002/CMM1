@@ -9,6 +9,8 @@ using SharpMath.Geometry._2D;
 using SharpMath.Geometry.Splitting;
 using SharpMath.Splines;
 using System.Globalization;
+using Spline;
+using Spline.Utils;
 using Element = SharpMath.FiniteElement._2D.Element;
 
 Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -51,59 +53,61 @@ void RunTest()
 {
     var services = new ServiceCollection();
     ConfigureServices(services);
-    var provider = services.BuildServiceProvider();
-
-    int splineGridSplit = Config.SplineSplit;
-
-    var splineGrid = new GridBuilder()
-        .SetXAxis(new AxisSplitParameter(
-            [1, 11],
-            new UniformSplitter(splineGridSplit)
-        ))
-        .SetYAxis(new AxisSplitParameter(
-            [1, 11],
-            new UniformSplitter(splineGridSplit)
-        ))
-        .Build();
-
-    var splineCreator = provider.GetService<SmoothingSpline2DCreator>();
-    splineCreator.Allocate(splineGrid);
 
     var tests = new Tests();
 
-    var femPoints = tests.GetPoints(10);
-    var inputPoints = tests.GetPoints(20);
+    var inputPoints = tests.GetPoints(Config.PointsNum - 1);
 
-    //var derivativesByX = tests.GetDerivativeByXValues(inputGrid.Nodes);
-    //var derivativesByY = tests.GetDerivativeByYValues(inputGrid.Nodes);
+    var us = new double[Config.UNums + 1];
+    var vs = new double[Config.VNums + 1];
+    var points = new Point[us.Length * vs.Length];
 
-    var points = new Point[101];
-
-    for (var i = 0; i < points.Length; i++)
+    for (int i = 0; i < us.Length; i++)
     {
-        points[i] = new Point(1 + i * 10d / (points.Length - 1), 1 + i * 10d / (points.Length - 1));
+        us[i] = 0.1 * i;
+        vs[i] = 0.1 * i;
+    }
+
+    for (var i = 0; i < vs.Length; i++)
+    {
+        for (var j = 0; j < us.Length; j++)
+        {
+            points[i * us.Length + j] = new Point(1 + 10d * us[i], 1 + 10d * vs[j]);
+        }
     }
 
     var funcValues = tests.GetFuncValues(inputPoints);
 
-    var weights = new double[funcValues.Length];
-
-    var random = new Random();
-
-    for (var i = 0; i < inputPoints.Length; i++)
+    int pointXNum = Config.PointsNum;
+    int pointYNum = Config.PointsNum;
+    
+    KnotSet uKnot = KnotSet.CreateToUniform(Config.DegreeU, pointXNum);
+    KnotSet vKnot = KnotSet.CreateToUniform(Config.DegreeV, pointYNum);
+    
+    double[][] weights = new double[pointXNum][];
+    for (var i = 0; i < pointXNum; i++)
     {
-        if (!femPoints.Any(p => Math.Abs(p.X - inputPoints[i].X) <= 1e-16 && Math.Abs(p.Y - inputPoints[i].Y) <= 1e-16))
+        weights[i] = new double[pointYNum];
+        for (var j = 0; j < pointYNum; j++)
         {
-            funcValues[i].Value *= random.NextDouble() * (2 - 1e-2) + 1e-2;
-            weights[i] =2;
-        }
-        else
-        {
-            weights[i] = 1d;
+            weights[i][j] = 1d;
         }
     }
     
-    var spline = splineCreator.CreateSpline(funcValues, weights, Config.Regularization);
+    double[][][] ptGrid = new double[pointXNum][][];
+    for (var i = 0; i < pointXNum; i++)
+    {
+        ptGrid[i] = new double[pointYNum][];
+        for (var j = 0; j < pointYNum; j++)
+        {
+            ptGrid[i][j] = new double[3];
+            ptGrid[i][j][0] = inputPoints[j * pointXNum + i].X;
+            ptGrid[i][j][1] = inputPoints[j * pointXNum + i].Y;
+            ptGrid[i][j][2] = funcValues[j * pointXNum + i].Value;
+        }
+    }
+
+    var surface = new NURBSSurface(ptGrid, uKnot, vKnot, Config.DegreeU, Config.DegreeV, weights);
 
     var femPath = "../../../../CMM1.View/" + Config.FolderName + "/dataFEM.txt";
     var splinePath = "../../../../CMM1.View/" + Config.FolderName + "/dataSpline.txt";
@@ -129,11 +133,15 @@ void RunTest()
     }
 
     Console.WriteLine("Spline solution");
-
-    foreach (var point in points)
+    
+    for (var i = 0; i < vs.Length; i++)
     {
-        Console.WriteLine($"{point.X:F8} {point.Y:F8} {spline.Calculate(point):E8}");
-        writerSpline.WriteLine($"{point.X:F8} {point.Y:F8} {spline.Calculate(point):E8}");
+        for (var j = 0; j < us.Length; j++)
+        {
+            var r = surface.ParameterAt(us[j], vs[i]);
+            Console.WriteLine($"{r[0]:F8} {r[1]:F8} {r[2]:E8}");
+            writerSpline.WriteLine($"{r[0]:F8} {r[1]:F8} {r[2]:E8}");
+        }
     }
 
     Console.WriteLine("True solution");
