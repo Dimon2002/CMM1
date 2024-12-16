@@ -94,8 +94,8 @@ void RunTest()
     {
         if (!femPoints.Any(p => Math.Abs(p.X - inputPoints[i].X) <= 1e-16 && Math.Abs(p.Y - inputPoints[i].Y) <= 1e-16))
         {
-            //funcValues[i].Value *= random.NextDouble() * (2 - 1e-2) + 1e-2;
-            weights[i] = 1d;
+            funcValues[i].Value *= random.NextDouble() * (2 - 1e-2) + 1e-2;
+            weights[i] =2;
         }
         else
         {

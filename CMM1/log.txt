@@ -618,3 +618,12 @@
 00:01:46:852 [Information SharpMath.EquationsSystem.Solver.GaussZeidelSolver] GZ ended: [642] 9.97450830E-016 -- relativeDiscrepancy
 00:02:07:684 [Information SharpMath.EquationsSystem.Solver.GaussZeidelSolver] GZ ended: [2103] 8.42280137E-016 -- relativeDiscrepancy
 00:02:26:332 [Information SharpMath.EquationsSystem.Solver.GaussZeidelSolver] GZ ended: [1105] 9.60936338E-016 -- relativeDiscrepancy
+00:10:11:326 [Information SharpMath.EquationsSystem.Solver.GaussZeidelSolver] GZ ended: [419] 9.68598918E-016 -- relativeDiscrepancy
+00:10:50:645 [Information SharpMath.EquationsSystem.Solver.GaussZeidelSolver] GZ ended: [241] 9.84712668E-016 -- relativeDiscrepancy
+00:11:24:665 [Information SharpMath.EquationsSystem.Solver.GaussZeidelSolver] GZ ended: [4883] 9.86957830E-016 -- relativeDiscrepancy
+00:13:53:994 [Information SharpMath.EquationsSystem.Solver.GaussZeidelSolver] GZ ended: [221] 8.83970981E-016 -- relativeDiscrepancy
+00:14:37:526 [Information SharpMath.EquationsSystem.Solver.GaussZeidelSolver] GZ ended: [382] 9.73724032E-016 -- relativeDiscrepancy
+00:15:20:057 [Information SharpMath.EquationsSystem.Solver.GaussZeidelSolver] GZ ended: [220] 8.99376671E-016 -- relativeDiscrepancy
+00:16:16:884 [Information SharpMath.EquationsSystem.Solver.GaussZeidelSolver] GZ ended: [223] 9.03748324E-016 -- relativeDiscrepancy
+00:16:34:880 [Information SharpMath.EquationsSystem.Solver.GaussZeidelSolver] GZ ended: [4848] 9.67057179E-016 -- relativeDiscrepancy
+00:17:13:675 [Information SharpMath.EquationsSystem.Solver.GaussZeidelSolver] GZ ended: [605] 9.34323113E-016 -- relativeDiscrepancy

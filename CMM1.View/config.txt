@@ -1,1 +1,1 @@
-sin(r)cos(z)/2
+sin(r)cos(z)/4
