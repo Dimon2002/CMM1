@@ -58,24 +58,6 @@ void RunTest()
 
     var inputPoints = tests.GetPoints(Config.PointsNum - 1);
 
-    var us = new double[Config.UNums + 1];
-    var vs = new double[Config.VNums + 1];
-    var points = new Point[us.Length * vs.Length];
-
-    for (int i = 0; i < us.Length; i++)
-    {
-        us[i] = 0.1 * i;
-        vs[i] = 0.1 * i;
-    }
-
-    for (var i = 0; i < vs.Length; i++)
-    {
-        for (var j = 0; j < us.Length; j++)
-        {
-            points[i * us.Length + j] = new Point(1 + 10d * us[i], 1 + 10d * vs[j]);
-        }
-    }
-
     var funcValues = tests.GetFuncValues(inputPoints);
 
     int pointXNum = Config.PointsNum;
@@ -108,6 +90,22 @@ void RunTest()
     }
 
     var surface = new NURBSSurface(ptGrid, uKnot, vKnot, Config.DegreeU, Config.DegreeV, weights);
+    
+    var us = new double[Config.UNums + 1];
+    var points = new Point[us.Length];
+
+    for (int i = 0; i < us.Length; i++)
+    {
+        us[i] = (1d / Config.UNums) * i;
+    }
+
+    for (int i = 0; i < us.Length; i++)
+    {
+        var r = surface.ParameterAt(us[i], us[i]);
+        points[i] = new Point(r[0], r[1]);
+    }
+    
+    var femSolution = tests.GetFuncValues(points);
 
     var femPath = "../../../../CMM1.View/" + Config.FolderName + "/dataFEM.txt";
     var splinePath = "../../../../CMM1.View/" + Config.FolderName + "/dataSpline.txt";
@@ -122,9 +120,7 @@ void RunTest()
     configWriter.Write(Config.FolderName);
 
     Console.WriteLine("FEM solution");
-
-    var femSolution = tests.GetFuncValues(points);
-
+    
     for (var i = 0; i < points.Length; i++)
     {
         var point = points[i];
@@ -134,14 +130,11 @@ void RunTest()
 
     Console.WriteLine("Spline solution");
     
-    for (var i = 0; i < vs.Length; i++)
+    for (var i = 0; i < us.Length; i++)
     {
-        for (var j = 0; j < us.Length; j++)
-        {
-            var r = surface.ParameterAt(us[j], vs[i]);
-            Console.WriteLine($"{r[0]:F8} {r[1]:F8} {r[2]:E8}");
-            writerSpline.WriteLine($"{r[0]:F8} {r[1]:F8} {r[2]:E8}");
-        }
+        var r = surface.ParameterAt(us[i], us[i]);
+        Console.WriteLine($"{r[0]:F8} {r[1]:F8} {r[2]:E8}");
+        writerSpline.WriteLine($"{r[0]:F8} {r[1]:F8} {r[2]:E8}");
     }
 
     Console.WriteLine("True solution");
