@@ -29,7 +29,7 @@ public static class Config
         "sin(r)cos(z)"
     };
 
-    private const int FuncIndex = 3;
+    private const int FuncIndex = 1;
 
     public static Func<Node2D, double, double> u = (p, t) => Us[FuncIndex](p, t);
     public static Func<Node2D, double, double> f = (p, t) => Fs[FuncIndex](p, t);
