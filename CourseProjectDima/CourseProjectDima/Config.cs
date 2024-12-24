@@ -43,11 +43,11 @@ public static class Config
     public static Func<Node2D, double, double> u = (p, t) => Us[FuncIndex](p, t);
     public static Func<Node2D, double, double> f = (p, t) => Fs[FuncIndex](p, t);
     
-    public static readonly int GridSplit = 10;
+    public static readonly int GridSplit = 20;
     public static readonly int UNums = 100;
-    public static readonly int PointsNum = 4;
+    public static readonly int PointsNum = 6;
     
     public static readonly string FolderName = Folders[FuncIndex];
-    public static readonly int DegreeU = 3;
-    public static readonly int DegreeV = 3;
+    public static readonly int DegreeU = 1;
+    public static readonly int DegreeV = 1;
 }
