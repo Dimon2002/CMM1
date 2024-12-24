@@ -1,3 +1,4 @@
+import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
@@ -93,5 +94,5 @@ ax1.set_yticks(np.arange(min_y, max_y + 1, 1))
 ax2.set_xticks(np.arange(min_x, max_x + 1, 1))
 
 # Отображение графиков
-plt.tight_layout()
-plt.show()
+fig1.savefig('surface_plot.png')
+fig2.savefig('projection_plot.png')
