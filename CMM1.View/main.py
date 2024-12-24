@@ -19,7 +19,7 @@ def read_config(filename):
         for line in file:
             data = line
     return data
-# Функция для чтения точек из файла
+
 def read_points(filename):
     x, y = [], []
     with open(filename, 'r') as file:
@@ -34,9 +34,13 @@ directory = read_config('config.txt')
 filename1 = f'{directory}/dataFEM.txt'
 filename2 = f'{directory}/dataSpline.txt'
 filename3 = f'{directory}/dataTrue.txt'
+points_file = f'{directory}/points.txt'
+
 x1, y1, z1 = read_data(filename1)
 x2, y2, z2 = read_data(filename2)
 x3, y3, z3 = read_data(filename3)
+
+px, py = read_points(points_file)
 
 # Определение минимальных и максимальных значений для x и y
 min_x = min(min(x1), min(x2), min(x3))
@@ -81,6 +85,7 @@ ax2 = fig2.add_subplot(111)
 ax2.plot(x1, z1, color='blue', label='Fem')
 ax2.plot(x2, z2, color='purple', label='Spline')
 ax2.plot(x3, z3, color='green', label='True')
+ax2.scatter(px, py, color='red', label='Points', zorder=5)
 
 ax2.set_xlabel('R')
 ax2.set_ylabel('Function value')
