@@ -69,8 +69,8 @@ surf1 = ax1.plot_surface(xi, yi, zi1, color='blue', label='Fem')
 surf2 = ax1.plot_surface(xi, yi, zi2, color='purple', label='Spline')
 surf3 = ax1.plot_surface(xi, yi, zi3, color='green', label='True')
 
-ax1.set_xlabel('R')
-ax1.set_ylabel('Z')
+ax1.set_xlabel('X')
+ax1.set_ylabel('Y')
 ax1.set_zlabel('Function value')
 ax1.set_zlim(min_z, max_z)  # Установка шкалы по оси Z
 
@@ -87,7 +87,7 @@ ax2.plot(x2, z2, color='purple', label='Spline')
 ax2.plot(x3, z3, color='green', label='True')
 ax2.scatter(px, py, color='red', label='Points', zorder=5)
 
-ax2.set_xlabel('R')
+ax2.set_xlabel('X')
 ax2.set_ylabel('Function value')
 ax2.set_ylim(min_z, max_z)  # Установка шкалы по оси Y
 
@@ -99,5 +99,4 @@ ax1.set_yticks(np.arange(min_y, max_y + 1, 1))
 ax2.set_xticks(np.arange(min_x, max_x + 1, 1))
 
 # Отображение графиков
-fig1.savefig('surface_plot.png')
-fig2.savefig('projection_plot.png')
+plt.show()

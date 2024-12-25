@@ -59,6 +59,7 @@ void RunTest()
     var inputPoints = tests.GetPoints(Config.PointsNum - 1);
 
     var funcValues = tests.GetFuncValues(inputPoints);
+    funcValues[12].Value = 1000;
 
     int pointXNum = Config.PointsNum;
     int pointYNum = Config.PointsNum;
@@ -76,6 +77,8 @@ void RunTest()
         }
     }
     
+    weights[2][2] = 0;
+    
     double[][][] ptGrid = new double[pointXNum][][];
     for (var i = 0; i < pointXNum; i++)
     {
@@ -92,30 +95,50 @@ void RunTest()
     var surface = new NURBSSurface(ptGrid, uKnot, vKnot, Config.DegreeU, Config.DegreeV, weights);
     
     var us = new double[Config.UNums + 1];
-    var points = new Point[us.Length];
+    Point[] points;
+    points = Config.PrintSurface ? new Point[us.Length * us.Length] : new Point[us.Length];
 
     for (int i = 0; i < us.Length; i++)
     {
         us[i] = (1d / Config.UNums) * i;
     }
 
-    for (int i = 0; i < us.Length; i++)
+    if (Config.PrintSurface)
     {
-        var r = surface.ParameterAt(us[i], us[i]);
-        points[i] = new Point(r[0], r[1]);
+        for (int i = 0; i < us.Length; i++)
+        {
+            for (int j = 0; j < us.Length; j++)
+            {
+                var r = surface.ParameterAt(us[i], us[j]);
+                points[i * us.Length + j] = new Point(r[0], r[1]);
+            }
+        }
     }
+    else
+    {
+        for (int i = 0; i < us.Length; i++)
+        {
+            var r = surface.ParameterAt(us[i], us[i]);
+            points[i] = new Point(r[0], r[1]);
+        }
+    }
+    
+
+    
     
     var femSolution = tests.GetFuncValues(points);
 
     var femPath = "../../../../CMM1.View/" + Config.FolderName + "/dataFEM.txt";
     var splinePath = "../../../../CMM1.View/" + Config.FolderName + "/dataSpline.txt";
     var truePath = "../../../../CMM1.View/" + Config.FolderName + "/dataTrue.txt";
+    var pointsPath = "../../../../CMM1.View/" + Config.FolderName + "/points.txt";
     
     Directory.CreateDirectory("../../../../CMM1.View/" + Config.FolderName);
     
     using var writerFEM = new StreamWriter(femPath);
     using var writerSpline = new StreamWriter(splinePath);
     using var writerTrue = new StreamWriter(truePath);
+    using var writerPoints = new StreamWriter(pointsPath);
     using var configWriter = new StreamWriter("../../../../CMM1.View/config.txt");
     configWriter.Write(Config.FolderName);
 
@@ -124,17 +147,29 @@ void RunTest()
     for (var i = 0; i < points.Length; i++)
     {
         var point = points[i];
-        Console.WriteLine($"{point.X:F8} {point.Y:F8} {femSolution[i].Value:E8}");
         writerFEM.WriteLine($"{point.X:F8} {point.Y:F8} {femSolution[i].Value:E8}");
     }
 
     Console.WriteLine("Spline solution");
-    
-    for (var i = 0; i < us.Length; i++)
+
+    if (Config.PrintSurface)
     {
-        var r = surface.ParameterAt(us[i], us[i]);
-        Console.WriteLine($"{r[0]:F8} {r[1]:F8} {r[2]:E8}");
-        writerSpline.WriteLine($"{r[0]:F8} {r[1]:F8} {r[2]:E8}");
+        for (int i = 0; i < us.Length; i++)
+        {
+            for (int j = 0; j < us.Length; j++)
+            {
+                var r = surface.ParameterAt(us[i], us[j]);
+                writerSpline.WriteLine($"{r[0]:F8} {r[1]:F8} {r[2]:E8}");
+            }
+        }
+    }
+    else
+    {
+        for (var i = 0; i < us.Length; i++)
+        {
+            var r = surface.ParameterAt(us[i], us[i]);
+            writerSpline.WriteLine($"{r[0]:F8} {r[1]:F8} {r[2]:E8}");
+        }
     }
 
     Console.WriteLine("True solution");
@@ -142,8 +177,12 @@ void RunTest()
 
     foreach (var point in points)
     {
-        Console.WriteLine($"{point.X:F8} {point.Y:F8} {u(new Node2D(point.X, point.Y), 1):E8}");
         writerTrue.WriteLine($"{point.X:F8} {point.Y:F8} {u(new Node2D(point.X, point.Y), 1):E8}");
+    }
+    
+    for (var i = 0; i < pointXNum; i++)
+    {
+        writerPoints.WriteLine($"{ptGrid[i][i][0]:F8} {ptGrid[i][i][2]:F8}");
     }
 }
 

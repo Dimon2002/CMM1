@@ -11,7 +11,7 @@ public static class Config
         (p, t) => Math.Pow(p.R, 2) + Math.Pow(p.Z, 2), // f = r^2 + z^2
         (p, t) => Math.Pow(p.R, 3) + Math.Pow(p.Z, 3), // f = r^3 + z^3
         (p, t) => Math.Pow(p.R - 6, 3) + Math.Pow(p.Z - 6, 3), // f = (r - 6)^3 + (z - 6)^3
-        (p, t) => Math.Pow(p.R - 6, 4) + Math.Pow(p.Z - 6, 4), // f = r^4 + z^4
+        (p, t) => Math.Pow(p.R - 6, 4) + Math.Pow(p.Z - 6, 4), // f = (r - 6)^4 + (z - 6)^4
         (p, t) => Math.Exp(p.R) + Math.Exp(p.Z), // f = exp(r) + exp(z)
         (p, t) => Math.Sin(p.R) * Math.Cos(p.Z)
     };
@@ -43,11 +43,12 @@ public static class Config
     public static Func<Node2D, double, double> u = (p, t) => Us[FuncIndex](p, t);
     public static Func<Node2D, double, double> f = (p, t) => Fs[FuncIndex](p, t);
     
-    public static readonly int GridSplit = 20;
+    public static readonly int GridSplit = 28;
     public static readonly int UNums = 100;
-    public static readonly int PointsNum = 6;
+    public static readonly int PointsNum = 5;
+    public static readonly bool PrintSurface = false;
     
     public static readonly string FolderName = Folders[FuncIndex];
-    public static readonly int DegreeU = 1;
-    public static readonly int DegreeV = 1;
+    public static readonly int DegreeU = 3;
+    public static readonly int DegreeV = 3;
 }
