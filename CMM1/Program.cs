@@ -59,14 +59,14 @@ void RunTest()
     var inputPoints = tests.GetPoints(Config.PointsNum - 1);
 
     var funcValues = tests.GetFuncValues(inputPoints);
-    funcValues[12].Value = 1000;
+   funcValues[12].Value = 1;
 
     int pointXNum = Config.PointsNum;
     int pointYNum = Config.PointsNum;
-    
+
     KnotSet uKnot = KnotSet.CreateToUniform(Config.DegreeU, pointXNum);
     KnotSet vKnot = KnotSet.CreateToUniform(Config.DegreeV, pointYNum);
-    
+
     double[][][] ptGrid = new double[pointXNum][][];
     for (var i = 0; i < pointXNum; i++)
     {
@@ -81,7 +81,10 @@ void RunTest()
     }
 
     var surface = new BSplineSurface(ptGrid, uKnot, vKnot, Config.DegreeU, Config.DegreeV);
-    
+
+    surface = surface
+        .CreateInterpolatingSurface();
+
     var us = new double[Config.UNums + 1];
     Point[] points;
     points = Config.PrintSurface ? new Point[us.Length * us.Length] : new Point[us.Length];
@@ -110,16 +113,16 @@ void RunTest()
             points[i] = new Point(r[0], r[1]);
         }
     }
-    
+
     var femSolution = tests.GetFuncValues(points);
 
     var femPath = "../../../../CMM1.View/" + Config.FolderName + "/dataFEM.txt";
     var splinePath = "../../../../CMM1.View/" + Config.FolderName + "/dataSpline.txt";
     var truePath = "../../../../CMM1.View/" + Config.FolderName + "/dataTrue.txt";
     var pointsPath = "../../../../CMM1.View/" + Config.FolderName + "/points.txt";
-    
+
     Directory.CreateDirectory("../../../../CMM1.View/" + Config.FolderName);
-    
+
     using var writerFEM = new StreamWriter(femPath);
     using var writerSpline = new StreamWriter(splinePath);
     using var writerTrue = new StreamWriter(truePath);
@@ -128,7 +131,7 @@ void RunTest()
     configWriter.Write(Config.FolderName);
 
     Console.WriteLine("FEM solution");
-    
+
     for (var i = 0; i < points.Length; i++)
     {
         var point = points[i];
@@ -136,6 +139,8 @@ void RunTest()
     }
 
     Console.WriteLine("Spline solution");
+
+   
 
     if (Config.PrintSurface)
     {
@@ -164,7 +169,7 @@ void RunTest()
     {
         writerTrue.WriteLine($"{point.X:F8} {point.Y:F8} {u(new Node2D(point.X, point.Y), 1):E8}");
     }
-    
+
     for (var i = 0; i < pointXNum; i++)
     {
         writerPoints.WriteLine($"{ptGrid[i][i][0]:F8} {ptGrid[i][i][2]:F8}");

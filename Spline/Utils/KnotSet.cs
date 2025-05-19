@@ -123,5 +123,31 @@ namespace Spline.Utils
 
             return knotSet;
         }
+
+        public static KnotSet CreateClampedKnots(int degree, int numControlPoints)
+        {
+            if (numControlPoints < degree + 1)
+                throw new ArgumentException("Number of control points must be ≥ degree + 1");
+
+            int totalKnots = numControlPoints + degree + 1;
+            double[] knots = new double[totalKnots];
+
+            // Заполнение начальных узлов (0)
+            for (int i = 0; i <= degree; i++)
+                knots[i] = 0.0;
+
+            // Заполнение внутренних узлов (равномерно распределённых)
+            int numInternalSegments = numControlPoints - degree;
+            double internalStep = 1.0 / numInternalSegments;
+
+            for (int i = 1; i < numInternalSegments; i++)
+                knots[degree + i] = i * internalStep;
+
+            // Заполнение конечных узлов (1)
+            for (int i = numControlPoints; i < totalKnots; i++)
+                knots[i] = 1.0;
+
+            return new KnotSet(knots);
+        }
     }
 }
