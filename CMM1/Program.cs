@@ -67,18 +67,6 @@ void RunTest()
     KnotSet uKnot = KnotSet.CreateToUniform(Config.DegreeU, pointXNum);
     KnotSet vKnot = KnotSet.CreateToUniform(Config.DegreeV, pointYNum);
     
-    double[][] weights = new double[pointXNum][];
-    for (var i = 0; i < pointXNum; i++)
-    {
-        weights[i] = new double[pointYNum];
-        for (var j = 0; j < pointYNum; j++)
-        {
-            weights[i][j] = 1d;
-        }
-    }
-    
-    weights[2][2] = 0;
-    
     double[][][] ptGrid = new double[pointXNum][][];
     for (var i = 0; i < pointXNum; i++)
     {
@@ -92,7 +80,7 @@ void RunTest()
         }
     }
 
-    var surface = new NURBSSurface(ptGrid, uKnot, vKnot, Config.DegreeU, Config.DegreeV, weights);
+    var surface = new BSplineSurface(ptGrid, uKnot, vKnot, Config.DegreeU, Config.DegreeV);
     
     var us = new double[Config.UNums + 1];
     Point[] points;
@@ -122,9 +110,6 @@ void RunTest()
             points[i] = new Point(r[0], r[1]);
         }
     }
-    
-
-    
     
     var femSolution = tests.GetFuncValues(points);
 

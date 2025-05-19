@@ -49,6 +49,6 @@ public static class Config
     public static readonly bool PrintSurface = false;
     
     public static readonly string FolderName = Folders[FuncIndex];
-    public static readonly int DegreeU = 3;
-    public static readonly int DegreeV = 3;
+    public static readonly int DegreeU = 1;
+    public static readonly int DegreeV = 1;
 }
