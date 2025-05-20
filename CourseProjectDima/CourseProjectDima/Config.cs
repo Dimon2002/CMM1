@@ -38,7 +38,7 @@ public static class Config
     ];
 
     private const int FuncIndex = 4;
-    private const int m = 2;
+    private const int m = 1;
 
     public static Func<Node2D, double, double> u = (p, t) => Us[FuncIndex](p, t);
     public static Func<Node2D, double, double> f = (p, t) => Fs[FuncIndex](p, t);
@@ -46,7 +46,7 @@ public static class Config
     public static readonly int GridSplit = 28;
     public static readonly int UNums = 100;
     public static readonly int PointsNum = 5;
-    public static readonly bool PrintSurface = false;
+    // public static readonly bool PrintSurface = false;
     
     public static readonly string FolderName = Folders[FuncIndex];
 

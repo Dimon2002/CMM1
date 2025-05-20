@@ -59,7 +59,7 @@ void RunTest()
     var inputPoints = tests.GetPoints(Config.PointsNum - 1);
 
     var funcValues = tests.GetFuncValues(inputPoints);
-   funcValues[12].Value = 1;
+    //funcValues[12].Value = 1;
 
     int pointXNum = Config.PointsNum;
     int pointYNum = Config.PointsNum;
@@ -86,88 +86,93 @@ void RunTest()
         .CreateInterpolatingSurface();
 
     var us = new double[Config.UNums + 1];
-    Point[] points;
-    points = Config.PrintSurface ? new Point[us.Length * us.Length] : new Point[us.Length];
+    Point[] points3D = new Point[us.Length * us.Length];
+    Point[] points2D = new Point[us.Length];
 
     for (int i = 0; i < us.Length; i++)
     {
         us[i] = (1d / Config.UNums) * i;
     }
 
-    if (Config.PrintSurface)
+    for (int i = 0; i < us.Length; i++)
     {
-        for (int i = 0; i < us.Length; i++)
+        for (int j = 0; j < us.Length; j++)
         {
-            for (int j = 0; j < us.Length; j++)
-            {
-                var r = surface.ParameterAt(us[i], us[j]);
-                points[i * us.Length + j] = new Point(r[0], r[1]);
-            }
-        }
-    }
-    else
-    {
-        for (int i = 0; i < us.Length; i++)
-        {
-            var r = surface.ParameterAt(us[i], us[i]);
-            points[i] = new Point(r[0], r[1]);
+            var r = surface.ParameterAt(us[i], us[j]);
+            points3D[i * us.Length + j] = new Point(r[0], r[1]);
         }
     }
 
-    var femSolution = tests.GetFuncValues(points);
+    for (int i = 0; i < us.Length; i++)
+    {
+        var r = surface.ParameterAt(us[i], us[i]);
+        points2D[i] = new Point(r[0], r[1]);
+    }
 
-    var femPath = "../../../../CMM1.View/" + Config.FolderName + "/dataFEM.txt";
-    var splinePath = "../../../../CMM1.View/" + Config.FolderName + "/dataSpline.txt";
-    var truePath = "../../../../CMM1.View/" + Config.FolderName + "/dataTrue.txt";
+    var femSolution2D = tests.GetFuncValues(points2D);
+    var femSolution3D = tests.GetFuncValues(points3D);
+
+    var femPath2D = "../../../../CMM1.View/" + Config.FolderName + "/dataFEM2D.txt";
+    var femPath3D = "../../../../CMM1.View/" + Config.FolderName + "/dataFEM3D.txt";
+    var splinePath2D = "../../../../CMM1.View/" + Config.FolderName + "/dataSpline2D.txt";
+    var splinePath3D = "../../../../CMM1.View/" + Config.FolderName + "/dataSpline3D.txt";
+    var truePath2D = "../../../../CMM1.View/" + Config.FolderName + "/dataTrue2D.txt";
+    var truePath3D = "../../../../CMM1.View/" + Config.FolderName + "/dataTrue3D.txt";
     var pointsPath = "../../../../CMM1.View/" + Config.FolderName + "/points.txt";
 
     Directory.CreateDirectory("../../../../CMM1.View/" + Config.FolderName);
 
-    using var writerFEM = new StreamWriter(femPath);
-    using var writerSpline = new StreamWriter(splinePath);
-    using var writerTrue = new StreamWriter(truePath);
+    using var writerFEM2D = new StreamWriter(femPath2D);
+    using var writerFEM3D = new StreamWriter(femPath3D);
+
+    using var writerSpline2D = new StreamWriter(splinePath2D);
+    using var writerSpline3D = new StreamWriter(splinePath3D);
+
+    using var writerTrue2D = new StreamWriter(truePath2D);
+    using var writerTrue3D = new StreamWriter(truePath3D);
+
     using var writerPoints = new StreamWriter(pointsPath);
     using var configWriter = new StreamWriter("../../../../CMM1.View/config.txt");
     configWriter.Write(Config.FolderName);
 
     Console.WriteLine("FEM solution");
-
-    for (var i = 0; i < points.Length; i++)
+    for (var i = 0; i < points2D.Length; i++)
     {
-        var point = points[i];
-        writerFEM.WriteLine($"{point.X:F8} {point.Y:F8} {femSolution[i].Value:E8}");
+        var point = points2D[i];
+        writerFEM2D.WriteLine($"{point.X:F8} {point.Y:F8} {femSolution2D[i].Value:E8}");
+    }
+    for (var i = 0; i < points3D.Length; i++)
+    {
+        var point = points3D[i];
+        writerFEM3D.WriteLine($"{point.X:F8} {point.Y:F8} {femSolution3D[i].Value:E8}");
     }
 
     Console.WriteLine("Spline solution");
 
-   
-
-    if (Config.PrintSurface)
+    for (int i = 0; i < us.Length; i++)
     {
-        for (int i = 0; i < us.Length; i++)
+        for (int j = 0; j < us.Length; j++)
         {
-            for (int j = 0; j < us.Length; j++)
-            {
-                var r = surface.ParameterAt(us[i], us[j]);
-                writerSpline.WriteLine($"{r[0]:F8} {r[1]:F8} {r[2]:E8}");
-            }
+            var r = surface.ParameterAt(us[i], us[j]);
+            writerSpline3D.WriteLine($"{r[0]:F8} {r[1]:F8} {r[2]:E8}");
         }
     }
-    else
+    for (var i = 0; i < us.Length; i++)
     {
-        for (var i = 0; i < us.Length; i++)
-        {
-            var r = surface.ParameterAt(us[i], us[i]);
-            writerSpline.WriteLine($"{r[0]:F8} {r[1]:F8} {r[2]:E8}");
-        }
+        var r = surface.ParameterAt(us[i], us[i]);
+        writerSpline2D.WriteLine($"{r[0]:F8} {r[1]:F8} {r[2]:E8}");
     }
 
     Console.WriteLine("True solution");
+    
     Func<Node2D, double, double> u = Config.u;
-
-    foreach (var point in points)
+    foreach (var point in points2D)
     {
-        writerTrue.WriteLine($"{point.X:F8} {point.Y:F8} {u(new Node2D(point.X, point.Y), 1):E8}");
+        writerTrue2D.WriteLine($"{point.X:F8} {point.Y:F8} {u(new Node2D(point.X, point.Y), 1):E8}");
+    }
+    foreach (var point in points3D)
+    {
+        writerTrue3D.WriteLine($"{point.X:F8} {point.Y:F8} {u(new Node2D(point.X, point.Y), 1):E8}");
     }
 
     for (var i = 0; i < pointXNum; i++)
